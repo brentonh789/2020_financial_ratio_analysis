@@ -25,17 +25,17 @@ cal_companies <- sub %>%
 ###filter for financial measures that are in interest in DuPont anlaysis
 #tags of interest: Revenue, Assets , StockholdersEquity, NetIncomeLoss
 #ignore coreg entities, coregistrant of the parent company registrant
-
+#Remove footnote column, because it caused duplicated records when spreading
 measures_ofi_list <- c('Revenues','RevenueFromContractWithCustomerExcludingAssessedTax', 'Assets','StockholdersEquity','NetIncomeLoss','Netincome')
 measures_ofi <- num %>%
   filter(tag %in% measures_ofi_list) %>%
   filter(ddate == 20191231, qtrs %in% c(0, 4)) %>%
-  filter(is.na(coreg))
+  filter(is.na(coreg)) %>%
+  select(-footnote)
 
 
 ###filter out companies that didnt report 10-K in 2020Q1 (may change for 2019Q4 also)
 #filter out company 1761940, because it had duplicated net loss
-
 dp_measures <- inner_join(cal_companies, measures_ofi, by='adsh')
 dp_measures <- dp_measures %>% 
   filter(!cik %in% c(1761940)) %>%
@@ -43,8 +43,12 @@ dp_measures <- dp_measures %>%
   spread(tag, value)
 
 
-###Use RevenueFromContractWithCustomerExcludingAssessedTax, but if null use Revenue for final revenue value
-dp_measures$Final_revenue <- ifelse(is.na(dp_measures$RevenueFromContractWithCustomerExcludingAssessedTax), dp_measures$Revenues, dp_measures$RevenueFromContractWithCustomerExcludingAssessedTax)
+###Pritoize Revenue over RevenueFromContractWithCustomerExcludingAssessedTax, but if null use Revenue for final revenue value
+
+#dp_measures$Final_revenue <- ifelse(is.na(dp_measures$RevenueFromContractWithCustomerExcludingAssessedTax), dp_measures$Revenues, dp_measures$RevenueFromContractWithCustomerExcludingAssessedTax)
+
+dp_measures$Final_revenue <- ifelse(!is.na(dp_measures$Revenues), dp_measures$Revenues, dp_measures$RevenueFromContractWithCustomerExcludingAssessedTax)
+
 
 
 #modify columns names in DuPont nameclature and calculate financial ratios
@@ -74,12 +78,11 @@ dp_financial_ratios <- dp_measures %>%
 cik_ticker <- read_delim("1_input_data/cik_ticker.csv", 
                          "|", escape_double = FALSE, trim_ws = TRUE)
 #get list of 100 to filter out low stocks. Unable to pull all stock data for all tickers
-sp100_list <- read_csv("1_input_data/s&p100_list.csv")
+sp500_list <- read_csv("1_input_data/constituents_csv.csv")
 
 cik_ticker <- cik_ticker %>%
   select('CIK','Ticker') %>%
-  filter(Ticker %in% sp100_list$Symbol) %>%
-  top_n(1, 'CIK')
+  filter(Ticker %in% sp500_list$Symbol) 
 
 
 
