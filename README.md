@@ -1,6 +1,6 @@
 ## Regression Analysis to Infer Stock Volatility in the COVID-19 Pandemic Using Companies Financial Ratios
 
-##vSummary
+## Summary
 The purpose of this analysis is to determine if their are financial ratios that can be used to infer the risk and volatility of stock prices during the COVID-19 pandemic. In order to determine if certain financial ratios are correlated with stock volatility during the pandemic, a multiple linear regression analysis is performed using a DuPont framework. The DuPont framework is a financial equation that models the return on equity of a company using profitability, return on assets and leverage. for this analysis, the three financial ratios are the independent variables and stock volatility is the dependent variable. 
 
 The analysis concludes that on average their is a negative correlation (.002 P-Value) between volatility and return on assets in a pandemic situation. This correlation indicates that as the return on assets ratio increases, the stock volatility decreases. Even though the model is significant, the model has a poor fit (.037 Adj R Square), which indicates that the majority of variability is unexplained and this model would likely not be useful for individual company predictions on volatility given that the model would likely give too large of a prediction interval range to be useful. Nevertheless, the model does provide insight on how on average, companies with high return on assets could be less risky and less volatility during a pandemic.
@@ -29,8 +29,8 @@ Ideally, all the S&P500 data would be available for analysis, but due to the amo
 Financial Statement Data
 https://www.sec.gov/dera/data/financial-statement-data-sets.html
 
-Stock Data
-https://cran.r-project.org/web/packages/tidyquant/vignettes/TQ01-core-functions-in-tidyquant.html#get-quantitative-data tidyquant (Yahoo Finance)
+Stock Data  - tidyquant (Yahoo Finance)
+https://cran.r-project.org/web/packages/tidyquant/vignettes/TQ01-core-functions-in-tidyquant.html#get-quantitative-data
 
 CIK to Ticker Mapping
 http://rankandfiled.com/#/data/tickers
